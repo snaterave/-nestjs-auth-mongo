@@ -9,9 +9,9 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
-      transformOptions: {
-        enableImplicitConversion: true,
-      },
+      transformOptions:{
+        enableImplicitConversion: true // transforma los queryparams en enteros (por defecto vienen como string)
+      }
     }),
   );
 
@@ -22,6 +22,9 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
-  await app.listen(3000);
+
+  app.enableCors();
+  await app.listen(process.env.PORT || 3000);
+  console.log('running in port: '+process.env.PORT)
 }
 bootstrap();

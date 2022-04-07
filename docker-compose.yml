@@ -1,12 +1,13 @@
-version: '3.3'
+version: '3.8'
 
 services:
-  mongo:
-    image: mongo:4.4
+  mongo: 
+    image: mongo:4.2
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_INITDB_ROOT_PASSWORD: pass123
+      MONGO_INITDB_DATABASE: testDb
     ports:
       - 27017:27017
     volumes:
-     - ./mongo_data:/data/db
+      - ./mongo_data:/data/db #mantener los datos guardados
