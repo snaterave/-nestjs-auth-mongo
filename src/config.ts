@@ -15,5 +15,6 @@ export default registerAs('config', () => {
       connection: process.env.MONGO_CONNECTION,
     },
     apiKey: process.env.API_KEY,
+    apiSecret: process.env.SECRET_KEY,
   };
 });
