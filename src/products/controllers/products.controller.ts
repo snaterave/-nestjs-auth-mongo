@@ -9,15 +9,16 @@ import {
   Delete,
   HttpStatus,
   HttpCode,
-  Res,
-  UseGuards
+  //Res,
+  UseGuards,
   // ParseIntPipe,
 } from '@nestjs/common';
-import { Response } from 'express';
+//import { Response } from 'express';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
-
-import { ParseIntPipe } from '../../common/parse-int.pipe';
+//import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard';
+//import { ParseIntPipe } from '../../common/parse-int.pipe';
 import { MongoIdPipe } from './../../common/mongo-id.pipe';
 import {
   CreateProductDto,
@@ -25,12 +26,16 @@ import {
   FilterProductsDto,
 } from '../dtos/products.dtos';
 import { ProductsService } from './../services/products.service';
-@UseGuards(AuthGuard('jwt'))
+import { Public } from '../../auth/decorators/public.decorator';
+import { Roles } from '../../auth/decorators/roles.decorator';
+import { Role } from '../../auth/models/roles.model';
+@UseGuards(JwtAuthGuard, RolesGuard)
 @ApiTags('products')
 @Controller('products')
 export class ProductsController {
   constructor(private productsService: ProductsService) {}
 
+  @Public() // no evalua el jwt (ESTO ES METADATA) viene del reflector
   @Get()
   @ApiOperation({ summary: 'List of products' })
   getProducts(@Query() params: FilterProductsDto) {
@@ -48,6 +53,9 @@ export class ProductsController {
     return this.productsService.findOne(productId);
   }
 
+  // SOlo los administradores pueden crear un producto
+  // Informacion que se trae del guardian.
+  @Roles(Role.ADMIN)
   @Post()
   create(@Body() payload: CreateProductDto) {
     return this.productsService.create(payload);
